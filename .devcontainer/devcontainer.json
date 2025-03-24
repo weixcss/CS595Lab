@@ -1,9 +1,18 @@
 {
-    "name": "Noir on Codespaces",
-    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-     "features": {
-       "ghcr.io/noir-lang/features/noir:latest": {
-         "version": "1.0.0-beta.2"
-       }
-     }
-   }
+  "name": "Noir Lab",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "noir-lang.vscode-noir"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "postCreateCommand": "bb --version || echo 'Barretenberg (bb) not found!'"
+}
+
