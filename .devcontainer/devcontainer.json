@@ -13,6 +13,6 @@
       }
     }
   },
-  "postCreateCommand": "bb --version || echo 'Barretenberg (bb) not found!'"
+  "postCreateCommand": "bb --version | grep 0.82.2 || echo 'Warning: bb version is not 0.82.2'"
 }
 

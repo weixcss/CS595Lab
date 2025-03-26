@@ -11,9 +11,10 @@ ENV PATH="/root/.nargo/bin:$PATH"
 # Install nargo via noirup
 RUN noirup
 
-# Install Barretenberg backend and set backend to Barretenberg
+# Install Barretenberg backend and set backend to Barretenberg v 0.82.0
 RUN curl -L https://raw.githubusercontent.com/AztecProtocol/aztec-packages/refs/heads/master/barretenberg/bbup/install | bash && \
-    bash -c "source ~/.bashrc && bbup"
+    bash -c "source ~/.bashrc && bbup -v 0.82.2"
+
 
 ENTRYPOINT ["nargo"]
 
