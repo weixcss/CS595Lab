@@ -146,13 +146,13 @@ The **verification key ties the proof to a specific circuit**. It ensures that a
 To generate a verification key:
 
 ```bash
-bb write_vk --scheme ultra_honk -b ./target/hello_world.json -o ./target
+bb write_vk --scheme ultra_honk  --oracle_hash keccak -b ./target/hello_world.json -o ./target
 ```
 
 To verify the proof/witness and make sure it is consistent with the verification key we run :
 
 ```bash
-bb verify --scheme ultra_honk -k ./target/vk -p ./target/proof
+bb verify --scheme ultra_honk --oracle_hash keccak -k ./target/vk -p ./target/proof
 ```
 ---
 > ℹ️ **Note:** Verifiers know nothing about the private inputs — they only use the compiled circuit (via the verification key) and the proof. This ensures private inputs remain confidential.
