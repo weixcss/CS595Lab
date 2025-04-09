@@ -178,8 +178,12 @@ export class MerkleTree implements IMerkleTree {
     const pathElements: Fr[] = [];
     const pathIndices: number[] = [];
 
-    const leaf = this.storage.get(MerkleTree.indexToKey(0, indexOfLeaf));
-    if (!leaf) throw new Error('leaf not found');
+    // Instead of throwing an error when a leaf is not found,
+    // we now default to the zero value for leaves (this.zeros[0]).
+    let leaf = this.storage.get(MerkleTree.indexToKey(0, indexOfLeaf));
+    if (!leaf) {
+      leaf = this.zeros[0];
+    }
 
     // Collect sibling info at each level.
     const handleIndex = (
