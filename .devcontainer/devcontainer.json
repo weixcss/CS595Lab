@@ -13,6 +13,6 @@
       }
     }
   },
-  "postCreateCommand": "bb --version | grep 0.82.2 || echo 'Warning: bb version is not 0.82.2'"
+  "postCreateCommand": "bb --version | grep 0.82.2 || echo 'Warning: bb version is not 0.82.2'; sh /workspaces/CS595Lab/hw5/gen_toml/init.sh"
 }
 
