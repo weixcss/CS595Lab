@@ -277,6 +277,65 @@ The provided off-chain Merkle tree (from Lab 2) is being used when generating th
   ```
 
 ---
+
+### 🔸 How `demo.ts` Uses CircuitTomlGenerator.ts and the Off-Chain Merkle Tree
+
+The `demo.ts` script serves as an example of how to integrate the off-chain Merkle tree from Lab 2 (implemented in `MerkleTree.ts`) with the logic provided by `CircuitTomlGenerator.ts`. Here’s a high-level overview of its operation:
+
+- **Initialization:**  
+  The demo script creates an instance of the `NoirCircuitTomlGenerator` class. This class instantiates a Merkle tree (with a depth of 8) by calling its constructor, and then calls the `init()` method to initialize the tree—including setting up the BarretenbergSync instance and preparing the zero values for each tree level.
+
+- **Deposit Process:**  
+  The demo script simulates a deposit by creating dummy Field elements (for the secret `id` and randomness `r`). It then calls:
+  ```typescript
+  generator.gentoml('deposit', id, r)
+  ```
+  This call:
+  - Computes the Pedersen hash commitment using the provided Field elements.
+  - Retrieves the current Merkle proof and the tree root.
+  - Inserts the commitment into the tree and updates the Merkle tree state.
+  - Records the deposit details (including the deposit index converted to an Fr element).
+  - Generates a TOML string containing all the inputs required by the deposit Noir circuit.
+
+- **Withdraw Process:**  
+  To simulate a withdrawal, the script calls:
+  ```typescript
+  generator.gentoml('withdraw', index)
+  ```
+  where `index` corresponds to the deposit record you wish to use. This call retrieves the previously recorded deposit details and generates a TOML string formatted for the withdraw circuit inputs.
+
+- **Output:**  
+  Finally, the demo script prints the generated TOML strings to the console, showing how the off-chain state (managed by the Merkle tree from Lab 2) is seamlessly integrated with the requirements of your Noir circuits.
+
+### Example Snippet from `demo.ts`:
+
+```typescript
+import { NoirCircuitTomlGenerator } from './CircuitTomlGenerator';
+import { Fr } from '@aztec/bb.js';
+
+async function runDemo() {
+  // Create and initialize the CircuitTomlGenerator instance.
+  const generator = new NoirCircuitTomlGenerator();
+  await generator.init();
+
+  // Create dummy Field elements for the deposit. Replace these with proper values.
+  const id = Fr.random(); 
+  const r  = Fr.random();
+
+  // Generate the TOML file for a deposit.
+  const depositToml = generator.gentoml('deposit', id, r);
+  console.log('Deposit TOML:\n', depositToml);
+
+  // Generate the TOML file for a withdrawal using the deposit at index 0.
+  const withdrawToml = generator.gentoml('withdraw', 0);
+  console.log('Withdraw TOML:\n', withdrawToml);
+}
+
+runDemo().catch(console.error);
+```
+
+
+
 ## 🚀 Running in Codespaces
 
 Same as Lab 1 and 2 — this repo supports zero-setup development via GitHub Codespaces.
