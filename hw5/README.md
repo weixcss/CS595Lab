@@ -222,6 +222,7 @@ Your repository should include the following structure:
 > bb write_solidity_verifier --scheme ultra_honk -k ./target/vk -o ./target/DepositVerifier.sol
 > bb write_solidity_verifier --scheme ultra_honk -k ./target/vk -o ./target/WithdrawVerifier.sol
 > ```
+
 ---
 
 
@@ -232,7 +233,7 @@ To generate the TOML files needed for your Noir circuits, you can run the provid
 ### How to Use:
 
 1. **Run the Demo Script:**  
-   Execute the demo using Node.js:
+   Execute the demo using Node.js (located in hw5/gen_toml/src/):
    ```bash
    npx ts-node demo.ts
    ```
@@ -354,14 +355,36 @@ Everything is ready to go:
 - `noirup` + `nargo`
 - `bbup` with Barretenberg backend
 - Node.js + npm + npx
-- Preconfigured examples in the `src/` directory
 
 ---
+
 ## ✨ Bonus Points
 
 1. **(+20%) Deploy your contract on-chain:**  
-   Link your deployed contract with the provided parent contract and post sample transactions demonstrating both deposits and withdrawals. (Technical quirk: note that Noir proofs comes attached with the public inputs. You have to seperate the public inputs from the proof before submitting to remix)
-2. **(+20%) Frontend Implementation:**  
-   Develop a graphical or command-line interface for interacting with the deposit and withdraw functions.
+
+Link your deployed contract to the provided parent contract, and post sample transactions demonstrating both deposits and withdrawals.
+
+*Technical Note:* Noir proofs are bundled with their public inputs. Before submitting the proof to Remix, you must separate the public inputs from the proof. To do this, calculate the size of the public inputs and remove that portion from the beginning of the proof. Refer to the section **"Deploying to Solidity on Sepolia via Remix"** in Lab 1, and update the provided script accordingly to handle the larger public input.
+
+**Deliverables:**
+- Deployed contract address on Sepolia.
+- Transaction hashes (or screenshots) showing at least one deposit and one withdrawal.
+- The modified deployment script used to separate public inputs from the proof.
 
 ---
+
+2. **(+20%) Frontend Implementation:**  
+
+Develop either a graphical user interface (GUI) or a command-line interface (CLI) to interact with the deposit and withdraw functions of your contract. The interface should stay in sync with the on-chain Merkle tree state by listening to the `Deposit` event. It must also allow any new user (that hasn't interacted with the contract before) to perform deposits and withdrawals from the contract.
+
+**Deliverables:**
+- Source code for the frontend (web or CLI).
+- Screenshots showing the interface in action.
+- Instructions on how to run the interface locally (or a link to a hosted version, if applicable).
+
+---
+## 📤 Submission Instructions
+
+- Zip your entire `/whirlwind/` directory, including all circuits, contracts, scripts, and the `README.md`.
+- Upload the resulting `.zip` file to Gradescope under the corresponding assignment.
+- Make sure any screenshots, documents or code for the bonus are also included in the ZIP (or linked in the `README.md`).
