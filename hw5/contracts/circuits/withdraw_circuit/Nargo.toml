@@ -1,0 +1,9 @@
+# File: circuits/withdraw-circuit/Nargo.toml
+
+[package]
+name = "withdraw-circuit"
+version = "0.1.0"
+
+[[targets]]
+name = "withdraw"
+path = "src/withdraw.nr"

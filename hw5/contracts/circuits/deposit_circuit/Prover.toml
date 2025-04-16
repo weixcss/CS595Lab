@@ -1,0 +1,6 @@
+# File: circuits/deposit-circuit/Prover.toml
+
+[prover]
+scheme = "ultra_honk"
+vk_path = "./target/vk"
+out_path = "./target/DepositVerifier.sol"
