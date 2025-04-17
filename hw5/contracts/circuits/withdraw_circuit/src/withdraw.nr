@@ -1,41 +1,36 @@
-// File: circuits/withdraw-circuit/src/withdraw.nr
+// File: contracts/circuits/withdraw_circuit/src/withdraw.nr
 
-const DEPTH: u32 = 8;
-
-// Helper: Convert the deposit index to an array of booleans (length DEPTH).
-fn to_bits(index: Field) -> [bool; DEPTH] {
-    return field_to_bits(index, DEPTH);
-}
-
-// Helper: Compute the Merkle root from a leaf, path, and index bit directions.
-fn compute_merkle_root(leaf: Field, path: [Field; DEPTH], index_bits: [bool; DEPTH]) -> Field {
-    let mut current = leaf;
-    for i in 0..DEPTH {
-        if index_bits[i] {
-            current = pedersen_hash([path[i], current]);
-        } else {
-            current = pedersen_hash([current, path[i]]);
-        }
-    }
-    return current;
-}
+use std::hash::pedersen_hash;
 
 fn main(
-    // Private inputs:
+    // Private inputs
     r: Field,
     index: Field,
-    path: [Field; DEPTH],
-    // Public inputs:
-    pub root: Field,
-    pub id: Field   // id serves as the nullifier
+    path: [Field; 8],
+
+    // Public inputs
+    root: Field,
+    id: Field
 ) {
-    // 1. Compute the commitment from id and r.
-    let computed_commitment = pedersen_hash([id, r]);
+    // 1. Recompute the commitment = PedersenHash(id, r)
+    let commitment = pedersen_hash([id, r]);
 
-    // 2. Convert the index to its bit representation.
-    let index_bits: [bool; DEPTH] = to_bits(index);
+    // 2. Decompose index into 8 LE bits
+    let bits: [u1; 8] = index.to_le_bits::<8>();
 
-    // 3. Recompute the Merkle root using the given path.
-    let computed_root = compute_merkle_root(computed_commitment, path, index_bits);
-    assert(computed_root == root);
+    // 3. Walk the Merkle path
+    let mut cur: Field = commitment;
+    for i in 0..8 {
+        if bits[i] == 1 {
+            cur = pedersen_hash([path[i], cur]);
+        } else {
+            cur = pedersen_hash([cur, path[i]]);
+        }
+    }
+
+    // 4. Check that the resulting root matches the public `root`
+    assert(cur == root);
+
+    // 5. Enforce the nullifier = id
+    //    (the public `id` input serves as your nullifier)
 }

@@ -1,9 +1,5 @@
-# File: circuits/deposit-circuit/Nargo.toml
-
 [package]
-name = "deposit-circuit"
+name    = "deposit_circuit"
 version = "0.1.0"
-
-[[targets]]
-name = "deposit"
-path = "src/deposit.nr"
+type    = "bin"
+entry   = "src/deposit.nr"

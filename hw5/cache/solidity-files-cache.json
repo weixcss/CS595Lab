@@ -1,0 +1,132 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/workspaces/CS595Lab/hw5/contracts/DepositVerifier.sol": {
+      "lastModificationDate": 1744918019606,
+      "contentHash": "75a162758d68f6390d2c09579fbd4bee",
+      "sourceName": "contracts/DepositVerifier.sol",
+      "solcConfig": {
+        "version": "0.8.27",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.21",
+        "^0.8.27"
+      ],
+      "artifacts": [
+        "BaseHonkVerifier",
+        "CommitmentSchemeLib",
+        "DepositVerifier",
+        "FrLib",
+        "Honk",
+        "HonkVerificationKey",
+        "IVerifier",
+        "RelationsLib",
+        "TranscriptLib"
+      ]
+    },
+    "/workspaces/CS595Lab/hw5/contracts/WithdrawVerifier.sol": {
+      "lastModificationDate": 1744918037294,
+      "contentHash": "4b66a2582f666e49f534fa6da26bcda4",
+      "sourceName": "contracts/WithdrawVerifier.sol",
+      "solcConfig": {
+        "version": "0.8.27",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.21",
+        "^0.8.27"
+      ],
+      "artifacts": [
+        "BaseHonkVerifier",
+        "CommitmentSchemeLib",
+        "FrLib",
+        "Honk",
+        "HonkVerificationKey",
+        "IVerifier",
+        "RelationsLib",
+        "TranscriptLib",
+        "WithdrawVerifier"
+      ]
+    },
+    "/workspaces/CS595Lab/hw5/contracts/whirlwind.sol": {
+      "lastModificationDate": 1744825433192,
+      "contentHash": "8eed30f2e7226087ddeead6cec76d6d9",
+      "sourceName": "contracts/whirlwind.sol",
+      "solcConfig": {
+        "version": "0.8.27",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IVerifier",
+        "Whirlwind"
+      ]
+    }
+  }
+}
