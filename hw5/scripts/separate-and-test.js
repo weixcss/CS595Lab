@@ -1,70 +1,74 @@
-// File: scripts/separate-and-test.js
+// scripts/separate-and-test.js
 require("dotenv").config();
-const fs   = require("fs");
-const path = require("path");
+const fs = require("fs");
 const { ethers } = require("hardhat");
 
 async function main() {
-  const WHIRLWIND_ADDRESS = process.env.WHIRLWIND_ADDRESS;
-  if (!WHIRLWIND_ADDRESS) {
-    throw new Error("WHIRLWIND_ADDRESS not set in .env");
-  }
+  // ——— Setup & sanity checks ———
+  const network = await ethers.provider.getNetwork();
+  console.log(`→ Connected to network: ${network.name} (chainId=${network.chainId})`);
 
-  const whirlwind = await ethers.getContractAt("Whirlwind", WHIRLWIND_ADDRESS);
-  console.log(`→ Using Whirlwind at ${WHIRLWIND_ADDRESS}\n`);
+  const whirlwind = await ethers.getContractAt("Whirlwind", process.env.WHIRLWIND_ADDRESS);
+  const code = await ethers.provider.getCode(whirlwind.address);
+  console.log(`→ Using Whirlwind at ${whirlwind.address}`);
+  console.log("→ On-chain bytecode length:", code.length / 2);
 
-  // —— DEPOSIT ——  
-  const depositProof = fs.readFileSync(
-    path.join(
-      __dirname, "..",
-      "contracts", "circuits", "deposit_circuit", "target", "deposit_proof", "proof"
-    )
+  const depositIndex = await whirlwind.depositIndex();
+  const currentRoot  = await whirlwind.currentRoot();
+  console.log("→ depositIndex =", depositIndex.toString());
+  console.log("→ currentRoot  =", currentRoot);
+
+  // ——— DEPOSIT ———
+  // 1) read the packed proof
+  const depositRaw = fs.readFileSync(
+    "contracts/circuits/deposit_circuit/target/deposit_proof/proof"
   );
-  const depositPublics = fs.readFileSync(
-    path.join(
-      __dirname, "..",
-      "contracts", "circuits", "deposit_circuit", "target", "deposit_proof", "public_inputs"
-    ), "utf8"
-  ).trim().split(/\r?\n/);
+  const PUB_COUNT = 4, PUB_BYTES = PUB_COUNT * 32;
+  const pubBuf   = depositRaw.slice(0, PUB_BYTES);
+  const proofBuf = depositRaw.slice(PUB_BYTES);
 
-  if (depositPublics.length !== 4) {
-    throw new Error("Deposit public_inputs file must have exactly 4 lines");
-  }
+  // 2) slice out each 32-byte field
+  const depositPublics = Array.from({ length: PUB_COUNT }, (_, i) =>
+    "0x" + pubBuf.slice(i * 32, (i + 1) * 32).toString("hex")
+  );
   const [ oldRoot, newRoot, commitment, index ] = depositPublics;
-  console.log("→ deposit inputs:", { oldRoot, newRoot, commitment, index });
 
+  console.log("→ depositPublics (oldRoot,newRoot,commitment,index):", depositPublics);
+
+  // 3) send the deposit txn (with an explicit gasLimit)
+  console.log("→ waiting for deposit…");
   const tx1 = await whirlwind.deposit(
-    depositProof,
-    newRoot,       // bytes32 newRoot
-    commitment,   // bytes32 commitment
-    { value: ethers.utils.parseEther("0.1") }
+    proofBuf,
+    newRoot,
+    commitment,
+    {
+      value: ethers.utils.parseEther("0.1"),  // must be exactly 0.1 ETH
+      gasLimit: 3_000_000,                     // dial up/down as needed
+    }
   );
   const receipt1 = await tx1.wait();
-  console.log(" → Deposit TX hash:", receipt1.transactionHash, "\n");
+  console.log(" → Deposit TX hash:", receipt1.transactionHash);
 
-  // —— WITHDRAW ——  
-  const withdrawProof = fs.readFileSync(
-    path.join(
-      __dirname, "..",
-      "contracts", "circuits", "withdraw_circuit", "target", "withdraw_proof", "proof"
-    )
+  // ——— WITHDRAW ———
+  const withdrawRaw = fs.readFileSync(
+    "contracts/circuits/withdraw_circuit/target/withdraw_proof/proof"
   );
-  const withdrawPublics = fs.readFileSync(
-    path.join(
-      __dirname, "..",
-      "contracts", "circuits", "withdraw_circuit", "target", "withdraw_proof", "public_inputs"
-    ), "utf8"
-  ).trim().split(/\r?\n/);
+  const W_PUB_COUNT = 2, W_PUB_BYTES = W_PUB_COUNT * 32;
+  const wPubBuf   = withdrawRaw.slice(0, W_PUB_BYTES);
+  const wProofBuf = withdrawRaw.slice(W_PUB_BYTES);
 
-  if (withdrawPublics.length !== 2) {
-    throw new Error("Withdraw public_inputs file must have exactly 2 lines");
-  }
+  const withdrawPublics = Array.from({ length: W_PUB_COUNT }, (_, i) =>
+    "0x" + wPubBuf.slice(i * 32, (i + 1) * 32).toString("hex")
+  );
   const [ root, nullifier ] = withdrawPublics;
-  console.log("→ withdraw inputs:", { root, nullifier });
 
+  console.log("→ withdrawPublics (root,nullifier):", withdrawPublics);
+
+  console.log("→ waiting for withdraw…");
   const tx2 = await whirlwind.withdraw(
-    withdrawProof,
-    nullifier      // bytes32 nullifier
+    wProofBuf,
+    nullifier,
+    { gasLimit: 2_000_000 }
   );
   const receipt2 = await tx2.wait();
   console.log(" → Withdraw TX hash:", receipt2.transactionHash);

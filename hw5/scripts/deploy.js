@@ -20,7 +20,7 @@ async function main() {
   // 3) Deploy Whirlwind
   const depth = 8;
   // Replace with the on‑chain expected initial root (empty tree)
-  const initialRoot = "0x18d85f3de6dcd78b6ffbf5d8374433a5528d8e3bf2100df0b7bb43a4c59ebd63";
+  const initialRoot = process.env.INITIAL_ROOT;
   const Whirlwind = await ethers.getContractFactory("Whirlwind");
   const whirlwind = await Whirlwind.deploy(
     depositVerifier.address,
